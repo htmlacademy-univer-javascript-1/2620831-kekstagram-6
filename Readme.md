@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Софья Починская](https://up.htmlacademy.ru/univer-js1/6/user/2620831).
-* Наставник: [Владимир Вавщик](https://htmlacademy.ru/profile/id1610171)
+* Наставник: [Владимир Шишлянников](https://htmlacademy.ru/profile/id1082173)
 
 ---
 
