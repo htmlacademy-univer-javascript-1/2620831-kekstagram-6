@@ -1,3 +1,4 @@
-import {generatePhotos} from './data-generator.js';
 import '.picture.js';
+import '.form-upload.js';
+
 
