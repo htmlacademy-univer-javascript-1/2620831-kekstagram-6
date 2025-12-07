@@ -1,5 +1,7 @@
 import { isEscapeKey } from './utils.js';
 import { resetFormValidation, initFormValidation } from './form-validation.js';
+import { initScaleControl,destroyScaleControl, resetScale } from './scale-control.js';
+import { initImageEffects, destroyEffects, resetEffects} from './image-effects.js';
 
 const imgUploadForm = document.querySelector('.img-upload__form');
 const imgUploadInput = imgUploadForm.querySelector('.img-upload__input');
@@ -20,6 +22,10 @@ const closeForm = () => {
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
   resetFormValidation();
+  destroyScaleControl();
+  destroyEffects();
+  resetScale();
+  resetEffects();
 };
 
 const openForm = () => {
@@ -27,6 +33,8 @@ const openForm = () => {
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
   initFormValidation();
+  initScaleControl();
+  initImageEffects();
 };
 
 function onDocumentKeydown (evt) {
