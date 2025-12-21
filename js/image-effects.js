@@ -1,4 +1,3 @@
-
 const EFFECTS = {
   none: { filter: '', min: 0, max: 100, step: 1, unit: '', className: 'effects__preview--none' },
   chrome: { filter: 'grayscale', min: 0, max: 1, step: 0.1, unit: '', className: 'effects__preview--chrome' },
@@ -93,11 +92,30 @@ const onEffectChange = (evt) => {
   }
 };
 
-
 const resetEffects = () => {
   currentEffect = 'none';
+
+  const originalEffectRadio = effectsList.querySelector('#effect-none');
+  if (originalEffectRadio) {
+    originalEffectRadio.checked = true;
+  }
+
   effectLevelSlider.noUiSlider.set(100);
-  applyEffect('none', 100);
+
+  imagePreview.style.filter = 'none';
+  imagePreview.className = '';
+  imagePreview.classList.add('img-upload__preview');
+
+  effectLevelContainer.classList.add('hidden');
+
+  if (hiddenEffectInput) {
+    hiddenEffectInput.value = 'none';
+  }
+  if (hiddenEffectLevelInput) {
+    hiddenEffectLevelInput.value = 100;
+  }
+
+  effectLevelValue.value = 100;
 };
 
 const destroyEffects = () => {
