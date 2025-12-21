@@ -10,11 +10,12 @@ const imagePreview = document.querySelector('.img-upload__preview img');
 const imgUploadForm = document.querySelector('.img-upload__form');
 
 let currentScale = DEFAULT_SCALE;
+let hiddenScaleInput;
 
 const updateScale = () => {
   scaleControlValue.value = `${currentScale}%`;
   imagePreview.style.transform = `scale(${currentScale / 100})`;
-  let hiddenScaleInput = imgUploadForm.querySelector('input[name="scale"]');
+
   if (!hiddenScaleInput) {
     hiddenScaleInput = document.createElement('input');
     hiddenScaleInput.type = 'hidden';

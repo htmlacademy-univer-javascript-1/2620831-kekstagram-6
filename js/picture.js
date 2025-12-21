@@ -1,34 +1,48 @@
-import { generatePhotos } from './data-generator.js';
+import { getData } from './api.js';
+import { showErrorMessage } from './message.js';
 import { openBigPicture } from './big-picture.js';
 
 const template = document.querySelector('#picture').content.querySelector('.picture');
-const pictures = generatePhotos();
+const pictureList = document.querySelector('.pictures');
+let pictures = [];
 
-const pictureListElement = document.querySelector('.pictures');
-const pictureListFragment = document.createDocumentFragment();
+export const getPictures = () => pictures;
 
-pictures.forEach((picture) => {
-  const {url, description, likes, comments} = picture;
-  const element = template.cloneNode(true);
+const renderPictures = (data) => {
+  pictures = data;
 
-  const imgElement = element.querySelector('.picture__img');
-  imgElement.src = url;
-  imgElement.alt = description;
+  const existingPictures = pictureList.querySelectorAll('.picture:not(.img-upload)');
+  existingPictures.forEach((picture) => picture.remove());
 
-  const likesElement = element.querySelector('.picture__likes');
-  likesElement.textContent = likes;
+  const pictureListFragment = document.createDocumentFragment();
 
-  const commentsElement = element.querySelector('.picture__comments');
-  commentsElement.textContent = comments.length;
+  pictures.forEach(({url, description, likes, comments}, index) => {
+    const element = template.cloneNode(true);
+    element.querySelector('.picture__img').src = url;
+    element.querySelector('.picture__img').alt = description;
+    element.querySelector('.picture__likes').textContent = likes;
+    element.querySelector('.picture__comments').textContent = comments.length;
+    element.dataset.index = index;
 
-  element.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    openBigPicture(picture);
+    element.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      openBigPicture(pictures[index], index);
+    });
+
+    pictureListFragment.appendChild(element);
   });
 
-  pictureListFragment.appendChild(element);
-});
+  pictureList.appendChild(pictureListFragment);
+};
 
-pictureListElement.appendChild(pictureListFragment);
+const onGetDataError = () => {
+  showErrorMessage();
+};
 
+const initPictureModule = () => {
+  getData()
+    .then(renderPictures)
+    .catch(onGetDataError);
+};
 
+export { initPictureModule };

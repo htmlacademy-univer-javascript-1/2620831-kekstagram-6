@@ -1,5 +1,11 @@
-import '.picture.js';
-import '.form-upload.js';
-import './scale-control.js';
-import './image-effects.js';
+import { initPictureModule } from './picture.js';
+import { initBigPicture } from './big-picture.js';
+import { initFormUpload } from './form-upload.js';
 
+const initApp = () => {
+  initPictureModule();
+  initBigPicture();
+  initFormUpload();
+};
+
+document.addEventListener('DOMContentLoaded', initApp);
