@@ -1,6 +1,7 @@
 import { getData } from './api.js';
 import { showErrorMessage } from './message.js';
 import { openBigPicture } from './big-picture.js';
+import { initFilters } from './filters.js';
 
 const template = document.querySelector('#picture').content.querySelector('.picture');
 const pictureList = document.querySelector('.pictures');
@@ -8,7 +9,7 @@ let pictures = [];
 
 export const getPictures = () => pictures;
 
-const renderPictures = (data) => {
+export const renderPictures = (data) => {
   pictures = data;
 
   const existingPictures = pictureList.querySelectorAll('.picture:not(.img-upload)');
@@ -41,7 +42,10 @@ const onGetDataError = () => {
 
 const initPictureModule = () => {
   getData()
-    .then(renderPictures)
+    .then((data) => {
+      renderPictures(data);
+      initFilters(data);
+    })
     .catch(onGetDataError);
 };
 
