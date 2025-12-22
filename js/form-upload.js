@@ -84,6 +84,8 @@ const openForm = () => {
     return;
   }
 
+  previewImage.src = URL.createObjectURL(file);
+
   imgUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
