@@ -4,7 +4,6 @@ import { initScaleControl, destroyScaleControl, resetScale } from './scale-contr
 import { initImageEffects, destroyEffects, resetEffects } from './image-effects.js';
 import { showErrorMessage } from './message.js';
 
-
 const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
 const imgUploadForm = document.querySelector('.img-upload__form');
@@ -17,12 +16,33 @@ const previewImage = document.querySelector('.img-upload__preview img');
 const defaultImageSrc = 'img/upload-default-image.jpg';
 const effectsPreview = document.querySelectorAll('.effects__preview');
 
+let currentImageUrl = null;
+
 const isTextFieldFocused = () =>
   document.activeElement === textHashtags || document.activeElement === textDescription;
 
-const resetFormToInitialState = () => {
-  imgUploadForm.reset();
+const revokeImageUrls = () => {
+  if (currentImageUrl && currentImageUrl.startsWith('blob:')) {
+    URL.revokeObjectURL(currentImageUrl);
+  }
 
+  effectsPreview.forEach((preview) => {
+    const bgImage = preview.style.backgroundImage;
+    if (bgImage && bgImage.includes('blob:')) {
+      const urlMatch = bgImage.match(/url\("(.+?)"\)/);
+      if (urlMatch && urlMatch[1].startsWith('blob:')) {
+        URL.revokeObjectURL(urlMatch[1]);
+      }
+    }
+  });
+
+  currentImageUrl = null;
+};
+
+const resetFormToInitialState = () => {
+  revokeImageUrls();
+
+  imgUploadForm.reset();
   imgUploadInput.value = '';
 
   previewImage.src = defaultImageSrc;
@@ -33,6 +53,8 @@ const resetFormToInitialState = () => {
   previewImage.classList.add('img-upload__preview', 'effects__preview--none');
 
   effectsPreview.forEach((preview) => {
+    preview.style.backgroundImage = `url("${defaultImageSrc}")`;
+
     preview.className = 'effects__preview';
     preview.classList.add('effects__preview--none');
   });
@@ -53,14 +75,12 @@ const closeForm = () => {
 
   imgUploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
-
   document.removeEventListener('keydown', onDocumentKeydown);
 
   resetFormValidation();
 
   destroyScaleControl();
   resetScale();
-
   destroyEffects();
   resetEffects();
 };
@@ -68,6 +88,19 @@ const closeForm = () => {
 const isValidFileType = (file) => {
   const fileName = file.name.toLowerCase();
   return FILE_TYPES.some((type) => fileName.endsWith(type));
+};
+
+const updatePreviewImages = (file) => {
+  revokeImageUrls();
+
+  const imageUrl = URL.createObjectURL(file);
+  currentImageUrl = imageUrl;
+
+  previewImage.src = imageUrl;
+
+  effectsPreview.forEach((preview) => {
+    preview.style.backgroundImage = `url("${imageUrl}")`;
+  });
 };
 
 const openForm = () => {
@@ -79,16 +112,16 @@ const openForm = () => {
 
   if (!isValidFileType(file)) {
     imgUploadInput.value = '';
-
     showErrorMessage('Пожалуйста, выберите изображение в формате GIF, JPEG или PNG');
     return;
   }
 
-  previewImage.src = URL.createObjectURL(file);
+  updatePreviewImages(file);
 
   imgUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
+
   initFormValidation();
   initScaleControl();
   initImageEffects();
@@ -104,6 +137,8 @@ function onDocumentKeydown(evt) {
 const initFormUpload = () => {
   imgUploadInput.addEventListener('change', openForm);
   imgUploadCancel.addEventListener('click', closeForm);
+
+  window.addEventListener('beforeunload', revokeImageUrls);
 };
 
 export { initFormUpload, closeForm };
