@@ -1,7 +1,7 @@
 import { isEscapeKey } from './utils.js';
 import { initFormValidation, resetFormValidation, unblockSubmitButton } from './form-validation.js';
 import { initScaleControl, destroyScaleControl, resetScale } from './scale-control.js';
-import { initImageEffects, destroyEffects, resetEffects } from './image-effects.js';
+import { initImageEffects, destroyEffects, resetEffects, setEffectsPreviewImage } from './image-effects.js';
 import { showErrorMessage } from './message.js';
 
 const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
@@ -14,33 +14,21 @@ const textHashtags = imgUploadForm.querySelector('.text__hashtags');
 const textDescription = imgUploadForm.querySelector('.text__description');
 const previewImage = document.querySelector('.img-upload__preview img');
 const defaultImageSrc = 'img/upload-default-image.jpg';
-const effectsPreview = document.querySelectorAll('.effects__preview');
 
 let currentImageUrl = null;
 
 const isTextFieldFocused = () =>
   document.activeElement === textHashtags || document.activeElement === textDescription;
 
-const revokeImageUrls = () => {
+const revokeImageUrl = () => {
   if (currentImageUrl && currentImageUrl.startsWith('blob:')) {
     URL.revokeObjectURL(currentImageUrl);
+    currentImageUrl = null;
   }
-
-  effectsPreview.forEach((preview) => {
-    const bgImage = preview.style.backgroundImage;
-    if (bgImage && bgImage.includes('blob:')) {
-      const urlMatch = bgImage.match(/url\("(.+?)"\)/);
-      if (urlMatch && urlMatch[1].startsWith('blob:')) {
-        URL.revokeObjectURL(urlMatch[1]);
-      }
-    }
-  });
-
-  currentImageUrl = null;
 };
 
 const resetFormToInitialState = () => {
-  revokeImageUrls();
+  revokeImageUrl();
 
   imgUploadForm.reset();
   imgUploadInput.value = '';
@@ -51,18 +39,6 @@ const resetFormToInitialState = () => {
 
   previewImage.className = '';
   previewImage.classList.add('img-upload__preview', 'effects__preview--none');
-
-  effectsPreview.forEach((preview) => {
-    preview.style.backgroundImage = `url("${defaultImageSrc}")`;
-
-    preview.className = 'effects__preview';
-    preview.classList.add('effects__preview--none');
-  });
-
-  const originalEffectRadio = document.querySelector('#effect-none');
-  if (originalEffectRadio) {
-    originalEffectRadio.checked = true;
-  }
 
   textHashtags.value = '';
   textDescription.value = '';
@@ -90,19 +66,6 @@ const isValidFileType = (file) => {
   return FILE_TYPES.some((type) => fileName.endsWith(type));
 };
 
-const updatePreviewImages = (file) => {
-  revokeImageUrls();
-
-  const imageUrl = URL.createObjectURL(file);
-  currentImageUrl = imageUrl;
-
-  previewImage.src = imageUrl;
-
-  effectsPreview.forEach((preview) => {
-    preview.style.backgroundImage = `url("${imageUrl}")`;
-  });
-};
-
 const openForm = () => {
   const file = imgUploadInput.files[0];
 
@@ -116,7 +79,14 @@ const openForm = () => {
     return;
   }
 
-  updatePreviewImages(file);
+  revokeImageUrl();
+
+  const imageUrl = URL.createObjectURL(file);
+  currentImageUrl = imageUrl;
+
+  previewImage.src = imageUrl;
+
+  setEffectsPreviewImage(imageUrl);
 
   imgUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
@@ -138,7 +108,7 @@ const initFormUpload = () => {
   imgUploadInput.addEventListener('change', openForm);
   imgUploadCancel.addEventListener('click', closeForm);
 
-  window.addEventListener('beforeunload', revokeImageUrls);
+  window.addEventListener('beforeunload', revokeImageUrl);
 };
 
 export { initFormUpload, closeForm };
