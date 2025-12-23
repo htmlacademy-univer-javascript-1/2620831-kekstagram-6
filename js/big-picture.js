@@ -121,7 +121,6 @@ const openBigPicture = (pictureData, index) => {
   commentsLoader.addEventListener('click', onCommentsLoaderClick);
 };
 
-const initBigPicture = () => {
-};
+const initBigPicture = () => {};
 
 export { openBigPicture, initBigPicture };
