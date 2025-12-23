@@ -23,7 +23,6 @@ const showMessage = (template, closeButtonSelector, innerSelector, message = nul
     element.remove();
     document.removeEventListener('keydown', onEscapeKeydown);
     document.removeEventListener('click', onOutsideClick);
-    body.classList.remove('modal-open');
   };
 
   function onEscapeKeydown(evt) {
@@ -44,8 +43,6 @@ const showMessage = (template, closeButtonSelector, innerSelector, message = nul
 
   body.appendChild(element);
 
-  body.classList.add('modal-open');
-
   setTimeout(() => {
     closeButton.focus();
   }, 100);
@@ -53,6 +50,7 @@ const showMessage = (template, closeButtonSelector, innerSelector, message = nul
   document.addEventListener('keydown', onEscapeKeydown);
   document.addEventListener('click', onOutsideClick);
 };
+
 
 const showSuccessMessage = () => {
   showMessage(successTemplate, '.success__button', '.success__inner');

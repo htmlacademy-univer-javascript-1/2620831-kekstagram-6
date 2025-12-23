@@ -2,7 +2,6 @@ import { renderPictures } from './picture.js';
 import { debounce } from './utils.js';
 
 const RANDOM_PICTURES_COUNT = 10;
-const DEBOUNCE_DELAY = 500;
 
 const imgFilters = document.querySelector('.img-filters');
 const filterForm = document.querySelector('.img-filters__form');
@@ -50,17 +49,24 @@ const applyFilter = (selectedFilter, button) => {
   renderPictures(filteredPictures);
 };
 
-const debouncedApplyFilter = debounce(applyFilter, DEBOUNCE_DELAY);
-
 const onFilterClick = (evt) => {
+  evt.preventDefault();
+
   const button = evt.target.closest('.img-filters__button');
 
   if (!button || button.id === currentFilter) {
     return;
   }
 
-  const selectedFilter = button.id;
-  debouncedApplyFilter(selectedFilter, button);
+  updateActiveButton(button);
+  currentFilter = button.id;
+
+  const renderWithDebounce = debounce(() => {
+    const filteredPictures = getFilteredPictures();
+    renderPictures(filteredPictures);
+  }, 500);
+
+  renderWithDebounce();
 };
 
 const initFilters = (loadedPictures) => {
@@ -78,3 +84,4 @@ const resetFilters = () => {
 };
 
 export { initFilters, resetFilters };
+

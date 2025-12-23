@@ -59,6 +59,17 @@ const renderComments = (comments) => {
 
   commentCounter.textContent = `${visibleCommentsCount} из ${totalComments} комментариев`;
 
+  const shownCount = bigPicture.querySelector('.social__comment-shown-count');
+  const totalCount = bigPicture.querySelector('.social__comment-total-count');
+
+  if (shownCount) {
+    shownCount.textContent = visibleCommentsCount;
+  }
+
+  if (totalCount) {
+    totalCount.textContent = totalComments;
+  }
+
   if (visibleCommentsCount >= totalComments) {
     commentsLoader.classList.add('hidden');
   } else {
@@ -84,6 +95,22 @@ const openBigPicture = (pictureData, index) => {
   commentsCount.textContent = pictureData.comments.length;
   socialCaption.textContent = pictureData.description;
 
+  let commentTotalCount = bigPicture.querySelector('.social__comment-total-count');
+  if (!commentTotalCount) {
+    commentTotalCount = document.createElement('span');
+    commentTotalCount.className = 'social__comment-total-count';
+    bigPicture.appendChild(commentTotalCount);
+  }
+  commentTotalCount.textContent = pictureData.comments.length;
+
+  let commentShownCount = bigPicture.querySelector('.social__comment-shown-count');
+  if (!commentShownCount) {
+    commentShownCount = document.createElement('span');
+    commentShownCount.className = 'social__comment-shown-count';
+    bigPicture.appendChild(commentShownCount);
+  }
+  commentShownCount.textContent = '0';
+
   renderComments(pictureData.comments);
 
   bigPicture.classList.remove('hidden');
@@ -94,7 +121,6 @@ const openBigPicture = (pictureData, index) => {
   commentsLoader.addEventListener('click', onCommentsLoaderClick);
 };
 
-const initBigPicture = () => {
-};
+const initBigPicture = () => {};
 
 export { openBigPicture, initBigPicture };
