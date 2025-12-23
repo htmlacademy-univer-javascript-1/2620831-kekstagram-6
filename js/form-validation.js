@@ -109,6 +109,8 @@ const onFormSubmit = (evt) => {
     blockSubmitButton();
 
     const formData = new FormData(form);
+    const scaleValue = document.querySelector('.scale__control--value').value;
+    formData.set('scale', scaleValue);
 
     sendData(formData)
       .then(() => {

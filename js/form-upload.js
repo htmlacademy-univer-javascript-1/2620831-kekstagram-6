@@ -99,6 +99,11 @@ const openForm = () => {
 
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt) && !isTextFieldFocused()) {
+    const errorMessage = document.querySelector('.error');
+    if (errorMessage) {
+      return;
+    }
+
     evt.preventDefault();
     closeForm();
   }

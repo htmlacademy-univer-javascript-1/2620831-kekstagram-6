@@ -1,7 +1,7 @@
-const BASE_URL = 'https://29.javascript.htmlacademy.pro/kekstagram';
+const BASE_URL = 'https://29.javascript.htmlacademy.pro/kekstagram/';
 
 const Route = {
-  GET_DATA: '/data',
+  GET_DATA: 'data',
   SEND_DATA: '',
 };
 

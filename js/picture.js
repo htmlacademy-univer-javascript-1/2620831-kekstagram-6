@@ -1,5 +1,4 @@
 import { getData } from './api.js';
-import { showErrorMessage } from './message.js';
 import { openBigPicture } from './big-picture.js';
 import { initFilters } from './filters.js';
 
@@ -37,7 +36,11 @@ export const renderPictures = (data) => {
 };
 
 const onGetDataError = () => {
-  showErrorMessage();
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'data-error';
+  errorDiv.textContent = 'Ошибка загрузки данных';
+  errorDiv.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: red; color: white; padding: 10px; text-align: center; z-index: 1000;';
+  document.body.appendChild(errorDiv);
 };
 
 const initPictureModule = () => {
@@ -48,5 +51,6 @@ const initPictureModule = () => {
     })
     .catch(onGetDataError);
 };
+
 
 export { initPictureModule };
